@@ -22,7 +22,22 @@ class PostRepo{
             }
         });
     }
-  
+  async delete(id,userId){
+        return await prisma.post.delete({
+            where : {
+                id,
+                userId
+            },
+            include:{
+                user:{
+                    select:{
+                        name:true,
+                        email:true,
+                    }
+                }
+            }
+        });
+    }
    
 }
 module.exports = new PostRepo();

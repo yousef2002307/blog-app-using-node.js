@@ -46,9 +46,10 @@ let createdpost = await PostRepo.create(data);
           "message" : "Post not found"
         })
       }
+        let deletepost = await PostRepo.delete(id,parseInt(req.user.id));
       return res.status(200).json({
-        "message" : "Post found",
-        "data" : post
+        "message" : "Post deleted",
+        "data" : deletepost
       })
     }
    
