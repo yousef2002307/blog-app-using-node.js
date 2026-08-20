@@ -37,6 +37,21 @@ let createdpost = await PostRepo.create(data);
         "data" : post
       })
     }
+
+     async delete(req,res,next){
+      const id = parseInt(req.params.id);
+      const post = await PostRepo.findById(id,parseInt(req.user.id));
+      if(!post){
+        return res.status(404).json({
+          "message" : "Post not found"
+        })
+      }
+      return res.status(200).json({
+        "message" : "Post found",
+        "data" : post
+      })
+    }
+   
    
 }
 
