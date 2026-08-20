@@ -40,23 +40,28 @@ class PostRepo{
     }
    
 
-      async all(userId){
-        return await prisma.post.findMany({
-            where : {
-                userId
-            },
-            include:{
-                user:{
-                    select:{
-                        name:true,
-                        email:true,
+    async all(userId, { page = 1, limit = 10 } = {}) {
+        const skip = (page - 1) * limit;
+
+        const [posts, total] = await prisma.$transaction([
+            prisma.post.findMany({
+                where: { userId },
+                include: {
+                    user: {
+                        select: {
+                            name: true,
+                            email: true,
+                        }
                     }
-                }
-            },
-               orderBy: {
-            createdAt: 'desc'  // or 'asc'
-        }
-        });
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit,
+            }),
+            prisma.post.count({ where: { userId } })
+        ]);
+
+        return { posts, total };
     }
 }
 module.exports = new PostRepo();

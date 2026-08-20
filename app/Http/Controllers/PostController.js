@@ -54,14 +54,25 @@ let createdpost = await PostRepo.create(data);
     }
    
 
-     async index(req,res,next){
-   
-      const posts = await PostRepo.all(parseInt(req.user.id));
-      
-      return res.status(200).json({
-        "message" : "Post fetched",
-        "data" : posts
-      })
+     async index(req, res, next) {
+        const page  = parseInt(req.query.page)  || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const { posts, total } = await PostRepo.all(parseInt(req.user.id), { page, limit });
+        const lastPage = Math.ceil(total / limit);
+
+        return res.status(200).json({
+            message : "Posts fetched",
+            data    : posts,
+            meta    : {
+                total,
+                page,
+                limit,
+                lastPage,
+                hasNextPage : page < lastPage,
+                hasPrevPage : page > 1,
+            }
+        });
     }
    
    
