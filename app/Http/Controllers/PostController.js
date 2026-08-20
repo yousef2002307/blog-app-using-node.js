@@ -53,6 +53,17 @@ let createdpost = await PostRepo.create(data);
       })
     }
    
+
+     async index(req,res,next){
+   
+      const posts = await PostRepo.all(parseInt(req.user.id));
+      
+      return res.status(200).json({
+        "message" : "Post fetched",
+        "data" : posts
+      })
+    }
+   
    
 }
 
