@@ -39,5 +39,24 @@ class PostRepo{
         });
     }
    
+
+      async all(userId){
+        return await prisma.post.findMany({
+            where : {
+                userId
+            },
+            include:{
+                user:{
+                    select:{
+                        name:true,
+                        email:true,
+                    }
+                }
+            },
+               orderBy: {
+            createdAt: 'desc'  // or 'asc'
+        }
+        });
+    }
 }
 module.exports = new PostRepo();
