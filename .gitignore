@@ -5,5 +5,3 @@ node_modules
 /app/generated/prisma
 
 /app/generated/prisma
-logs
-/logs/*
