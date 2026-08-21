@@ -1,5 +1,6 @@
 const PostRepo = require("../../Repos/PostRepo");
 const { createPostSchema } = require('../Requests/PostRequest');
+const { EditPostSchema } = require('../Requests/EditPostRequest');
 
 class PostController {
   async store(req,res,next){
@@ -75,7 +76,25 @@ let createdpost = await PostRepo.create(data);
         });
     }
    
-   
+      async edit(req,res,next){
+  // inside your controller method:
+const parsed = EditPostSchema.safeParse(req.body);
+if (!parsed.success) {
+  return res.status(422).json({
+    errors: parsed.error.flatten().fieldErrors,
+  });
+}
+const data = parsed.data;
+data.id = parseInt(req.params.id);
+
+let updatedpost = await PostRepo.update(data);
+   console.log(data)
+    return res.status(201).json({
+        "message" : "post updated",
+        "data" : updatedpost
+    })
+
+  }
 }
 
 module.exports = new PostController();

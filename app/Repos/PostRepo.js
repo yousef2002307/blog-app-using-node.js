@@ -63,5 +63,22 @@ class PostRepo{
 
         return { posts, total };
     }
+
+    async update(data){
+        return await prisma.post.update({
+            where : {
+                id : data.id
+            },
+            include:{
+                user:{
+                    select:{
+                        name:true,
+                        email:true,
+                    }
+                }
+            },
+            data
+        });
+    }
 }
 module.exports = new PostRepo();
