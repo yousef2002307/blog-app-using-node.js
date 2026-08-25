@@ -37,7 +37,7 @@ class iscredendtialsistrue extends Specification {
  statusCode = 401; 
     async isSatisfiedBy({ email, password }) {
          this.data = {};
-        const user = await UserRepo.findByEmail(email);
+        const user = await UserRepo.findByEmailWithPermissions(email);
      
         if (!user) {
            
@@ -52,6 +52,7 @@ class iscredendtialsistrue extends Specification {
         return true;
     }
 }
+
 
 // ==================== Password Specifications ====================
 

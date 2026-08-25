@@ -54,18 +54,21 @@ class AuthController {
             }
             console.log(validation);
 
-          //create token 
+          // Flatten permissions from the loaded user object
+          const permissions = validation.data.permissions ?? [];
+
+          //create token
           const token = jwt.sign({
             id: validation.data.id,
             email: validation.data.email,
-           
+            permissions,
           }, process.env.JWT_SECRET, {
             expiresIn: "1h"
           });
           const refreshToken = jwt.sign({
             id: validation.data.id,
             email: validation.data.email,
-           
+            permissions,
           }, process.env.JWT_SECRET, {
             expiresIn: "7d"
           });
@@ -100,7 +103,7 @@ class AuthController {
                 });
             }
             const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET);
-            const user = await UserRepo.findById(decodedToken.id);
+            const user = await UserRepo.findByEmailWithPermissions(decodedToken.email);
             if (!user) {
                 return res.status(401).json({
                     message: "Unauthorized"
@@ -109,6 +112,7 @@ class AuthController {
             const token = jwt.sign({
                 id: user.id,
                 email: user.email,
+                permissions: user.permissions ?? [],
             }, process.env.JWT_SECRET, {
                 expiresIn: "1h"
             });
