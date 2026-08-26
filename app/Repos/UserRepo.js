@@ -1,9 +1,50 @@
 const prisma = require("../../prisma/client")
 
 class UserRepo {
-    async create(data) {
-        return await prisma.user.create({
-            data
+    async create(data, roleName = "user") {
+        return await prisma.$transaction(async (tx) => {
+            // Find role or create it if it does not exist
+            const role = await tx.role.upsert({
+                where: { name: roleName },
+                update: {},
+                create: { name: roleName }
+            });
+
+            // If it's the default 'user' role, ensure 'post:read' permission is linked if permission exists
+            if (roleName === "user") {
+                const readPermission = await tx.permission.findUnique({
+                    where: { name: "post:read" }
+                });
+
+                if (readPermission) {
+                    await tx.rolePermission.upsert({
+                        where: {
+                            roleId_permissionId: {
+                                roleId: role.id,
+                                permissionId: readPermission.id
+                            }
+                        },
+                        update: {},
+                        create: {
+                            roleId: role.id,
+                            permissionId: readPermission.id
+                        }
+                    });
+                }
+            }
+
+            const user = await tx.user.create({
+                data
+            });
+
+            await tx.userRole.create({
+                data: {
+                    userId: user.id,
+                    roleId: role.id
+                }
+            });
+
+            return user;
         });
     }
 
