@@ -87,6 +87,12 @@ class UserRepo {
             return user;
         });
     }
+
+    async findByEmail(email) {
+        return await prisma.user.findUnique({
+            where: { email }
+        });
+    }
 }
 
 module.exports = new UserRepo();

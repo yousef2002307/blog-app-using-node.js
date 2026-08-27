@@ -34,6 +34,16 @@ class AdminsController {
                 });
             }
             const { name, email, password } = parsed.data;
+
+            const existingUser = await UserRepo.findByEmail(email);
+            if (existingUser) {
+                return res.status(422).json({
+                    errors: {
+                        email: ["Email is already registered"],
+                    },
+                });
+            }
+
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await UserRepo.create({ name, email, password: hashedPassword }, "admin");
             return res.status(201).json({
