@@ -16,6 +16,7 @@ app.use(express.json())
 
 app.use("/api",require("./routes/api/Auth"))
 app.use("/api",require("./routes/api/post"))
+app.use("/api",require("./routes/api/Admin/Admins"))
 // app.use(verifyJWT)
 // app.get("/tt",(req,res)=>{
 //   res.json({message:"tt"})

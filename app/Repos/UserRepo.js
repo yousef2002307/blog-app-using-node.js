@@ -98,4 +98,4 @@ class UserRepo {
     }
 }
 
-module.exports = new UserRepo();
+module.exports = new UserRepo();
