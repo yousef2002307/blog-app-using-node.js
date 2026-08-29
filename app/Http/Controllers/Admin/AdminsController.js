@@ -44,6 +44,8 @@ class AdminsController {
                 });
             }
 
+            
+
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await UserRepo.create({ name, email, password: hashedPassword }, "admin");
             return res.status(201).json({
